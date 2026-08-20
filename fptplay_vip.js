@@ -1,6 +1,6 @@
 /**
  * FPT Play Pro - Deep VIP & Ad-Block Engine
- * Author: Custom User
+ * Repository: dth2927/fptplay
  */
 
 "use strict";
@@ -63,7 +63,7 @@ try {
 
   body = JSON.stringify(obj);
 } catch (e) {
-  // Bỏ qua lỗi nếu JSON không hợp lệ để tránh crash app
+  // Bỏ qua lỗi JSON để tránh crash ứng dụng
 }
 
 $done({ body: body });
