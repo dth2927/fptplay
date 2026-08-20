@@ -1,6 +1,6 @@
 /**
- * FPT Play Pro - Deep VIP & Ad-Block Engine
- * Repository: dth2927/fptplay
+ * FPT Play Universal Debug & VIP Engine
+ * Author: DangTrungHieu
  */
 
 "use strict";
@@ -8,28 +8,37 @@
 let url = $request.url;
 let body = $response.body;
 
-try {
-  let obj = JSON.parse(body);
+// In ra Console của Shadowrocket để kiểm tra URL nào đang chạy
+console.log("[FPT Play Debug] URL: " + url);
 
-  // 1. LUỒNG 1: Xử lý thông tin Profile / Tài khoản / Gói cước
-  if (url.includes("user") || url.includes("profile") || url.includes("account") || url.includes("me") || url.includes("get_package")) {
-    let targetNode = obj.data || obj.result || obj;
-    if (targetNode) {
-      targetNode.is_vip = 1;
-      targetNode.vip = true;
-      targetNode.vip_status = 1;
-      targetNode.is_subscriber = 1;
-      targetNode.package_name = "VIP & MAX Ultimate";
-      targetNode.package_code = "VIP_MAX_ALL";
-      targetNode.expired_date = 4102444800; // Năm 2099
-      targetNode.package_expired_date = "2099-12-31 23:59:59";
-      targetNode.end_time = 4102444800;
+if (body) {
+  try {
+    let obj = JSON.parse(body);
 
-      if (targetNode.devices && typeof targetNode.devices === "object") {
-        targetNode.devices.max_allowed = 5;
-        targetNode.devices.current_devices = 1;
+    // In ra một phần dữ liệu gốc để phân tích cấu trúc
+    console.log("[FPT Play Debug] Original Body: " + body.substring(0, 200));
+
+    // Chiến thuật tổng lực: Tìm mọi ngóc ngách có thể chứa thông tin user/gói cước để ép đổi
+    let targets = [obj, obj.data, obj.result, obj.user, obj.account, obj.profile];
+
+    targets.forEach(node => {
+      if (node && typeof node === "object") {
+        node.is_vip = 1;
+        node.vip = true;
+        node.vip_status = 1;
+        node.is_subscriber = 1;
+        node.package_name = "VIP & MAX Ultimate";
+        node.package_code = "VIP_MAX_ALL";
+        node.expired_date = 4102444800; // Năm 2099
+        node.package_expired_date = "2099-12-31 23:59:59";
+        node.end_time = 4102444800;
+        node.require_vip = 0;
+        node.is_locked = false;
+        node.allow_play = true;
       }
-    }
+    });
+
+    // Nếu có danh sách gói cước, kích hoạt toàn bộ
     if (Array.isArray(obj.packages)) {
       obj.packages.forEach(pkg => {
         pkg.status = 1;
@@ -37,33 +46,12 @@ try {
         pkg.expired_date = "2099-12-31T23:59:59Z";
       });
     }
-  }
 
-  // 2. LUỒNG 2: Xử lý phản hồi cấp phép xem video / lấy link stream
-  if (url.includes("play") || url.includes("stream") || url.includes("get_link") || url.includes("authorize")) {
-    let targetNode = obj.data || obj.result || obj;
-    if (targetNode) {
-      targetNode.require_vip = 0;
-      targetNode.is_locked = false;
-      targetNode.allow_play = true;
-      targetNode.error_code = 0;
-    }
+    body = JSON.stringify(obj);
+    console.log("[FPT Play Debug] Modified successfully!");
+  } catch (e) {
+    console.log("[FPT Play Debug Error]: " + e.message);
   }
-
-  // 3. LUỒNG 3: Xóa sạch dữ liệu quảng cáo trong cấu hình trả về
-  if (url.includes("config") || url.includes("ads") || url.includes("setting")) {
-    let targetNode = obj.data || obj.result || obj;
-    if (targetNode) {
-      if (Array.isArray(targetNode.ads)) targetNode.ads = [];
-      if (Array.isArray(targetNode.advertisements)) targetNode.advertisements = [];
-      targetNode.enable_ads = false;
-      targetNode.show_ads = false;
-    }
-  }
-
-  body = JSON.stringify(obj);
-} catch (e) {
-  // Bỏ qua lỗi JSON để tránh crash ứng dụng
 }
 
 $done({ body: body });
