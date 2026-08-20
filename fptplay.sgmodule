@@ -1,9 +1,13 @@
-#!name = FPT Play VIP (Custom)
-#!desc = Mo khoa goi VIP FPT Play tuy chinh ca nhan
-#!author = Custom User
+#!name = FPT Play VIP & Ad-Block
+#!desc = Mo khoa goi VIP va chan quang cao FPT Play by dangtrunghieu
+#!author = dangtrunghieu
+
+[Rule]
+DOMAIN-SUFFIX,ads.fptplay.net,REJECT
+DOMAIN-SUFFIX,track.fptplay.net,REJECT
 
 [Script]
-fpt_vip_engine = type=http-response, pattern=^https?:\/\/.*\.fptplay\.(net|tv|com)\/api\/v\d+\/(user|profile|account|me|get_package|subscribers|package\/check), script-path=https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/fptplay_vip.js, requires-body=true, max-size=-1, timeout=10
+fpt_vip_engine = type=http-response, pattern=^https?:\/\/.*\.fptplay\.(net|tv|com)\/api\/v\d+\/(user|profile|account|me|get_package|subscribers|package\/check|play|stream|get_link|authorize|config|ads), script-path=https://raw.githubusercontent.com/dth2927/fptplay/main/fptplay_vip.js, requires-body=true, max-size=-1, timeout=10
 
 [MITM]
 hostname = %APPEND%, *.fptplay.net, *.fptplay.tv, *.fptplay.com
