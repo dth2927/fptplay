@@ -1,13 +1,9 @@
-#!name = FPT Play VIP & Ad-Block
-#!desc = Mo khoa goi VIP va chan quang cao FPT Play by dangtrunghieu
+#!name = FPT Play Universal Bypass
+#!desc = Mo khoa VIP FPT Play kem che do ghi log debug
 #!author = dangtrunghieu
 
-[Rule]
-DOMAIN-SUFFIX,ads.fptplay.net,REJECT
-DOMAIN-SUFFIX,track.fptplay.net,REJECT
-
 [Script]
-fpt_vip_engine = type=http-response, pattern=^https?:\/\/.*\.fptplay\.(net|tv|com)\/api\/v\d+\/(user|profile|account|me|get_package|subscribers|package\/check|play|stream|get_link|authorize|config|ads), script-path=https://raw.githubusercontent.com/dth2927/fptplay/main/fptplay_vip.js, requires-body=true, max-size=-1, timeout=10
+fpt_universal_engine = type=http-response, pattern=^https?:\/\/.*\.fptplay\.(net|tv|com)\/api\/, script-path=https://raw.githubusercontent.com/dth2927/fptplay/main/fptplay_vip.js, requires-body=true, max-size=-1, timeout=10
 
 [MITM]
 hostname = %APPEND%, *.fptplay.net, *.fptplay.tv, *.fptplay.com
